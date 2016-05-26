@@ -1,18 +1,14 @@
-﻿using Scripts.Mythik.Mobiles;
-using Server;
+﻿using Server;
 using Server.Mobiles;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Scripts.Mythik.Systems.Achievements
 {
     public class Achievement
     {
 
-        public Achievement(int id, int catid, int itemIcon,bool hiddenTillComplete,string title, string desc, short rewardPoints,int total, params Type[] rewards)
+        public Achievement(int id, int catid, int itemIcon,bool hiddenTillComplete, Achievement prereq, string title, string desc, short rewardPoints,int total, params Type[] rewards)
         {
             ID = id;
             CategoryID = catid;
@@ -43,6 +39,7 @@ namespace Scripts.Mythik.Systems.Achievements
         public Type[] RewardItems { get; set; }
         public int CompletionTotal { get; set; }
         public bool HiddenTillComplete { get; private set; }
+        public Achievement PreReq { get; set; }
     }
 
 
@@ -50,8 +47,8 @@ namespace Scripts.Mythik.Systems.Achievements
     public class DiscoveryAchievement : Achievement
     {
         private string m_Region;
-        public DiscoveryAchievement(int id, int catid, int itemIcon, bool hiddenTillComplete, string title, string desc, short RewardPoints, string region, params Type[] rewards)
-            :base(id,catid, itemIcon, hiddenTillComplete,title,desc,RewardPoints,1,rewards)
+        public DiscoveryAchievement(int id, int catid, int itemIcon, bool hiddenTillComplete, Achievement prereq, string title, string desc, short RewardPoints, string region, params Type[] rewards)
+            :base(id,catid, itemIcon, hiddenTillComplete, prereq ,title,desc,RewardPoints,1,rewards)
         {
             m_Region = region;
             CompletionTotal = 1;
@@ -74,8 +71,8 @@ namespace Scripts.Mythik.Systems.Achievements
     public class HunterAchievement : Achievement
     {
         private Type m_Mobile;
-        public HunterAchievement(int id, int catid, int itemIcon, bool hiddenTillComplete, int total, string title, string desc, short RewardPoints, Type targets, params Type[] rewards)
-            :base(id,catid, itemIcon, hiddenTillComplete,title,desc,RewardPoints,total,rewards)
+        public HunterAchievement(int id, int catid, int itemIcon, bool hiddenTillComplete, Achievement prereq, int total, string title, string desc, short RewardPoints, Type targets, params Type[] rewards)
+            :base(id,catid, itemIcon, hiddenTillComplete, prereq, title ,desc, RewardPoints, total, rewards)
         {
             m_Mobile = targets;
             EventSink.OnKilledBy += EventSink_OnKilledBy;
@@ -95,8 +92,8 @@ namespace Scripts.Mythik.Systems.Achievements
     class HarvestAchievement : Achievement
     {
         private Type m_Item;
-        public HarvestAchievement(int id, int catid, int itemIcon, bool hiddenTillComplete, int total, string title, string desc, short RewardPoints, Type targets, params Type[] rewards)
-            : base(id, catid,itemIcon, hiddenTillComplete, title, desc, RewardPoints, total, rewards)
+        public HarvestAchievement(int id, int catid, int itemIcon, bool hiddenTillComplete, Achievement prereq, int total, string title, string desc, short RewardPoints, Type targets, params Type[] rewards)
+            : base(id, catid,itemIcon, hiddenTillComplete,prereq, title, desc, RewardPoints, total, rewards)
         {
             m_Item = targets;
             EventSink.ResourceHarvestSuccess += EventSink_ResourceHarvestSuccess;
@@ -117,8 +114,8 @@ namespace Scripts.Mythik.Systems.Achievements
     class SkillProgressAchievement : Achievement
     {
         private Type m_Item;
-        public SkillProgressAchievement(int id, int catid, int itemIcon, bool hiddenTillComplete, int total, string title, string desc, short RewardPoints, Type targets, params Type[] rewards)
-            : base(id, catid, itemIcon, hiddenTillComplete, title, desc, RewardPoints, total, rewards)
+        public SkillProgressAchievement(int id, int catid, int itemIcon, bool hiddenTillComplete, Achievement prereq, int total, string title, string desc, short RewardPoints, Type targets, params Type[] rewards)
+            : base(id, catid, itemIcon, hiddenTillComplete,prereq, title, desc, RewardPoints, total, rewards)
         {
             m_Item = targets;
             

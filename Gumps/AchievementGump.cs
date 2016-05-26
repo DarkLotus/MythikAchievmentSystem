@@ -1,12 +1,5 @@
-﻿using Scripts.Mythik.Mobiles;
-using Server;
-using Server.Gumps;
-using Server.Mobiles;
-using System;
+﻿using Server.Gumps;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Server.Network;
 
 namespace Scripts.Mythik.Systems.Achievements.Gumps
@@ -62,7 +55,8 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
             {
                 if (ac.CategoryID == category)
                 {
-                    if(achieves.ContainsKey(ac.ID))
+                    //TODO only display if prereq is null or prereq complete
+                    if (achieves.ContainsKey(ac.ID))
                     {
                         AddAchieve(ac, cnt, achieves[ac.ID]);
                     }
@@ -73,7 +67,7 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
                 }                
             }
         }
-
+        
         private void AddAchieve(Achievement ac, int i, AcheiveData acheiveData)
         {
             int index = i % 4;

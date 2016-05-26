@@ -3,21 +3,24 @@
 using Server;
 using System;
 using System.Collections.Generic;
-
-using Scripts.Mythik.Mobiles;
-using Scripts.Mythik.Systems.Achievements.Gumps;
 using Server.Mobiles;
 using Server.Items;
 using Server.Commands;
 using Server.Misc;
-using Scripts.Mythik.Systems.Achievements.Items;
+#if STOREONITEM
+
+#else
+using Scripts.Mythik.Mobiles;
+#endif
+
+using Scripts.Mythik.Systems.Achievements.Gumps;
 
 namespace Scripts.Mythik.Systems.Achievements
 {
     //TODO
     //subcategories X
     //page limit?
-    // Achievement prereq achieve before showing
+    // Achievement prereq achieve before showing X
     //TODO Skill gain achieves needs event
     //TODO ITEM crafted event sink
     // 
@@ -132,6 +135,7 @@ namespace Scripts.Mythik.Systems.Achievements
                 {
                     try
                     {
+                        player.SendAsciiMessage("You have recieved an award for completing this achievment!");
                         var item = (Item)Activator.CreateInstance(ach.RewardItems[0]);
                         if (!WeightOverloading.IsOverloaded(player))
                             player.Backpack.DropItem(item);
