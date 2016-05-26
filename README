@@ -1,0 +1,2 @@
+﻿Ensure you have STOREONITEM defined, if you are not intergrating into your player mobile.
+The system will automatically add a stone at 0,0,0 fel to store achievment data.
