@@ -2,32 +2,32 @@
 using System.Collections.Generic;
 
 
-namespace Scripts.Mythik.Systems.Achievements.Items
+namespace Scripts.Mythik.Systems.Achievements
 {
-    public class AcheivmentSystemMemoryStone : Item
+    public class AchievementSystemMemoryStone : Item
     {
-        public static AcheivmentSystemMemoryStone GetInstance()
+        public static AchievementSystemMemoryStone GetInstance()
         {
             if (m_instance == null)
-                m_instance = new AcheivmentSystemMemoryStone();
+                m_instance = new AchievementSystemMemoryStone();
             m_instance.MoveToWorld(new Point3D(0, 0, 0), Map.Felucca);
             return m_instance;
         }
-        internal Dictionary<Serial, Dictionary<int, AcheiveData>> Achievements = new Dictionary<Serial, Dictionary<int, AcheiveData>>();
+        internal Dictionary<Serial, Dictionary<int, AchieveData>> Achievements = new Dictionary<Serial, Dictionary<int, AchieveData>>();
         internal Dictionary<Serial, int> PointsTotals = new Dictionary<Serial, int>();
-        private static AcheivmentSystemMemoryStone m_instance;
+        private static AchievementSystemMemoryStone m_instance;
 
 
 
         [Constructable]
-        public AcheivmentSystemMemoryStone() : base(0xED4)
+        public AchievementSystemMemoryStone() : base(0xED4)
         {
             Visible = false;
-            Name = "AcheivmentSystemStone DO NOT REMOVE";
+            Name = "AchievementSystemStone DO NOT REMOVE";
             m_instance = this;
         }
 
-        public AcheivmentSystemMemoryStone(Serial serial) : base(serial)
+        public AchievementSystemMemoryStone(Serial serial) : base(serial)
         {
             m_instance = this;
         }
@@ -79,13 +79,13 @@ namespace Scripts.Mythik.Systems.Achievements.Items
                 for (int i = 0; i < count; i++)
                 {
                     Serial id = reader.ReadInt();
-                    var dict = new Dictionary<int, AcheiveData>();
+                    var dict = new Dictionary<int, AchieveData>();
                     int iCount = reader.ReadInt();
                     if (iCount > 0)
                     {
                         for (int x = 0; x < iCount; x++)
                         {
-                            dict.Add(reader.ReadInt(), new AcheiveData(reader));
+                            dict.Add(reader.ReadInt(), new AchieveData(reader));
                         }
 
                     }

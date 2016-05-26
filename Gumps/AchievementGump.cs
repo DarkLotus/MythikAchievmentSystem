@@ -7,9 +7,9 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
     class AchievementGump : Gump
     {
         private int m_curTotal;
-        private Dictionary<int, AcheiveData> m_curAchieves;
+        private Dictionary<int, AchieveData> m_curAchieves;
 
-        public AchievementGump(Dictionary<int, AcheiveData> achieves, int total,int category = 0) : base(25, 25)
+        public AchievementGump(Dictionary<int, AchieveData> achieves, int total,int category = 1) : base(25, 25)
         {
             
             m_curAchieves = achieves;
@@ -25,7 +25,7 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
             this.AddBackground(72, 104, 245, 453, 9270);
             this.AddBackground(72, 34, 635, 53, 9270);
             this.AddBackground(327, 0, 133, 41, 9200);
-            this.AddLabel(292, 52, 68, @"Mythik Achievment System");
+            this.AddLabel(292, 52, 68, @"Mythik Achievement System");
             this.AddLabel(360, 11, 82, total + @" Points");
             this.AddBackground(341, 522, 353, 26, 9200);
 
@@ -47,20 +47,31 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
                 if (i == category) // selected
                     this.AddImage(x + 12, 129 + (i * 31), 1210);
                 else
-                    this.AddButton(102, 129 + (i * 31), 1209, 1210, 5000 + i, GumpButtonType.Reply, 0);
+                    this.AddButton(x + 12, 129 + (i * 31), 1209, 1210, 5000 + AchievmentSystem.Categories[i].ID, GumpButtonType.Reply, 0);
                 this.AddLabel(x + 32, 125 + (i * 31), 0, AchievmentSystem.Categories[i].Name);
             }
             int cnt = 0; 
             foreach( var ac in AchievmentSystem.Achievements)
             {
+                
                 if (ac.CategoryID == category)
                 {
-                    //TODO only display if prereq is null or prereq complete
+                    if(ac.PreReq != null)
+                    {
+                        if (!achieves.ContainsKey(ac.PreReq.ID))
+                            continue;
+                        if(achieves[ac.PreReq.ID].CompletedOn != null)
+                            continue;
+
+                    }
                     if (achieves.ContainsKey(ac.ID))
                     {
                         AddAchieve(ac, cnt, achieves[ac.ID]);
                     }
-                    else {
+                    else
+                    {
+                        if (ac.HiddenTillComplete)
+                            continue;
                         AddAchieve(ac, cnt,null);
                     }
                     cnt++;
@@ -68,7 +79,7 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
             }
         }
         
-        private void AddAchieve(Achievement ac, int i, AcheiveData acheiveData)
+        private void AddAchieve(Achievement ac, int i, AchieveData acheiveData)
         {
             int index = i % 4;
             if(index == 0)
@@ -79,7 +90,7 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
                 this.AddButton(345, 524, 4014, 4015, 0, GumpButtonType.Page, i/4);
             }
             int bg = 9350;
-            if (acheiveData?.CompletedOn != null)
+            if (acheiveData != null && acheiveData.CompletedOn != null)
                 bg = 9300;
             this.AddBackground(340, 122 + (index * 100), 347, 97, bg);
             this.AddLabel(414, 131 + (index * 100), 49, ac.Title);
@@ -89,12 +100,12 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
 
             var step = 95.0 / ac.CompletionTotal;
             var progress = 0;
-            if (acheiveData?.CompletedOn != null)
+            if (acheiveData != null && acheiveData.CompletedOn != null)
                 progress = acheiveData.Progress;
 
             this.AddImageTiled(416, 203 + (index * 100), (int)(progress * step), 9, 9752);
             this.AddHtml(413, 152 + (index * 100), 194, 47,ac.Desc, (bool)true, (bool)true);
-            if (acheiveData?.CompletedOn != null)
+            if (acheiveData != null && acheiveData.CompletedOn != null)
                 this.AddLabel(566, 127 + (index * 100), 32, acheiveData.CompletedOn.ToShortDateString());
 
             if(ac.CompletionTotal > 1)

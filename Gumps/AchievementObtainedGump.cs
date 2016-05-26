@@ -11,7 +11,7 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
     {
         private Achievement ach;
 
-        public AchievementObtainedGump(Achievement ach):base(25,25)
+        public AchievementObtainedGump(Achievement ach):base(470,389)
         {
             this.ach = ach;
 
@@ -23,7 +23,7 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
             this.AddBackground(39, 38, 350, 100, 9270);
             this.AddAlphaRegion(48, 45, 332, 86);
             if(ach.ItemIcon > 0)
-                this.AddItem(29, 48, ach.ItemIcon);
+                this.AddItem(39, 52, ach.ItemIcon);
             this.AddLabel(121, 55, 49, ach.Title);
             this.AddHtml(120, 80, 167, 42, ach.Desc, (bool)true, (bool)true);
             this.AddLabel(275, 51, 61, @"COMPLETE");

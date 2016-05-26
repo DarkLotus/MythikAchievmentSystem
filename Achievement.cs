@@ -5,7 +5,10 @@ using System;
 
 namespace Scripts.Mythik.Systems.Achievements
 {
-    public class Achievement
+    /// <summary>
+    /// Base Achievement Class.
+    /// </summary>
+    public abstract class Achievement
     {
 
         public Achievement(int id, int catid, int itemIcon,bool hiddenTillComplete, Achievement prereq, string title, string desc, short rewardPoints,int total, params Type[] rewards)
@@ -57,7 +60,7 @@ namespace Scripts.Mythik.Systems.Achievements
 
         private void EventSink_OnEnterRegion(OnEnterRegionEventArgs e)
         {
-            if (e.Region == null || e.From == null)
+            if (e == null || e.Region == null || e.From == null || e.Region.Name == null)
                 return;
             var player = e.From as PlayerMobile;
             if(e.Region.Name.Contains(m_Region) && player != null)
@@ -131,17 +134,17 @@ namespace Scripts.Mythik.Systems.Achievements
         }
     }
 
-    class AcheiveData
+    class AchieveData
     {
         //public int ID { get; set; }
         public int Progress { get; set; }
         public DateTime CompletedOn { get; set; }
 
-        public AcheiveData()
+        public AchieveData()
         {
 
         }
-        public AcheiveData(GenericReader reader)
+        public AchieveData(GenericReader reader)
         {
             Deserialize(reader);
         }
