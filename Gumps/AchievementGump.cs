@@ -1,6 +1,7 @@
 ﻿using Server.Gumps;
 using System.Collections.Generic;
 using Server.Network;
+using System.Linq;
 
 namespace Scripts.Mythik.Systems.Achievements.Gumps
 {
@@ -29,28 +30,30 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
             this.AddLabel(360, 11, 82, total + @" Points");
             this.AddBackground(341, 522, 353, 26, 9200);
 
-
+            int cnt = 0;
             for(int i = 0;i < AchievmentSystem.Categories.Count; i++)
             {
                 int x = 90;
-                if (AchievmentSystem.Categories[i].Parent != 0 && i != category)
-                    continue;
-                else
-                {
-                    x += 20;
-                }
                 int bgID = 9200;
-                if(i == category)
+                var cat = AchievmentSystem.Categories[i];
+                var reqCat = AchievmentSystem.Categories.Where(c => c.ID == category).FirstOrDefault();
+
+                if (cat.Parent != 0 && cat.ID != reqCat.ID && cat.Parent != reqCat.ID && cat.Parent != reqCat.Parent)
+                    continue;
+                if(cat.Parent != 0)
+                    x += 20;
+                if(cat.ID == category)
                     bgID = 5120;
-                this.AddBackground(x, 123 + (i * 31), 18810 / x, 25, bgID);
-               
-                if (i == category) // selected
-                    this.AddImage(x + 12, 129 + (i * 31), 1210);
+
+                this.AddBackground(x, 123 + (cnt * 31), 18810 / x, 25, bgID);
+                if (cat.ID == category) // selected
+                    this.AddImage(x + 12, 129 + (cnt * 31), 1210);
                 else
-                    this.AddButton(x + 12, 129 + (i * 31), 1209, 1210, 5000 + AchievmentSystem.Categories[i].ID, GumpButtonType.Reply, 0);
-                this.AddLabel(x + 32, 125 + (i * 31), 0, AchievmentSystem.Categories[i].Name);
+                    this.AddButton(x + 12, 129 + (cnt * 31), 1209, 1210, 5000 + cat.ID, GumpButtonType.Reply, 0);
+                this.AddLabel(x + 32, 125 + (cnt * 31), 0, cat.Name);
+                cnt++;
             }
-            int cnt = 0; 
+            cnt = 0; 
             foreach( var ac in AchievmentSystem.Achievements)
             {
                 
