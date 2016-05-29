@@ -1,4 +1,4 @@
-﻿#define STOREONITEM
+﻿//#define STOREONITEM
 
 using Server;
 using System;
@@ -21,9 +21,9 @@ namespace Scripts.Mythik.Systems.Achievements
     //subcategories X
     //page limit?
     // Achievement prereq achieve before showing X
-    //TODO Skill gain achieves needs event
-    //TODO ITEM crafted event sink
-    //TODO SKILL USE
+    //TODO Skill gain achieves needs event X
+    //TODO ITEM crafted event sink X
+    //TODO SKILL USE 
     //TODO HousePlaced event sink
     /*thought of eating a lemon (and other foods), consume pots,
      *  craft a home, 
