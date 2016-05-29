@@ -1,4 +1,5 @@
 ﻿using Server;
+using Server.Mobiles;
 using System.Collections.Generic;
 
 
@@ -14,10 +15,21 @@ namespace Scripts.Mythik.Systems.Achievements
             return m_instance;
         }
         internal Dictionary<Serial, Dictionary<int, AchieveData>> Achievements = new Dictionary<Serial, Dictionary<int, AchieveData>>();
-        internal Dictionary<Serial, int> PointsTotals = new Dictionary<Serial, int>();
+        private Dictionary<Serial, int> m_PointsTotal = new Dictionary<Serial, int>();
         private static AchievementSystemMemoryStone m_instance;
 
-
+        public int GetPlayerPointsTotal(PlayerMobile m)
+        {
+            if (!m_PointsTotal.ContainsKey(m.Serial))
+                m_PointsTotal.Add(m.Serial, 0);
+            return m_PointsTotal[m.Serial];
+        }
+        public void AddPoints(PlayerMobile m, int points)
+        {
+            if (!m_PointsTotal.ContainsKey(m.Serial))
+                m_PointsTotal.Add(m.Serial, 0);
+            m_PointsTotal[m.Serial] += points;
+        }
 
         [Constructable]
         public AchievementSystemMemoryStone() : base(0xED4)
@@ -38,8 +50,8 @@ namespace Scripts.Mythik.Systems.Achievements
 
             writer.Write((int)0); // version 
 
-            writer.Write(PointsTotals.Count);
-            foreach (var kv in PointsTotals)
+            writer.Write(m_PointsTotal.Count);
+            foreach (var kv in m_PointsTotal)
             {
                 writer.Write(kv.Key);
                 writer.Write(kv.Value);
@@ -69,7 +81,7 @@ namespace Scripts.Mythik.Systems.Achievements
             {
                 for (int i = 0; i < count; i++)
                 {
-                    PointsTotals.Add(reader.ReadInt(), reader.ReadInt());
+                    m_PointsTotal.Add(reader.ReadInt(), reader.ReadInt());
                 }
             }
 

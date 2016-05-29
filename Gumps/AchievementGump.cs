@@ -82,7 +82,7 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
             }
         }
         
-        private void AddAchieve(Achievement ac, int i, AchieveData acheiveData)
+        private void AddAchieve(BaseAchievement ac, int i, AchieveData acheiveData)
         {
             int index = i % 4;
             if(index == 0)

@@ -9,9 +9,9 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
 {
     class AchievementObtainedGump : Gump
     {
-        private Achievement ach;
+        private BaseAchievement ach;
 
-        public AchievementObtainedGump(Achievement ach):base(470,389)
+        public AchievementObtainedGump(BaseAchievement ach):base(470,389)
         {
             this.ach = ach;
 
