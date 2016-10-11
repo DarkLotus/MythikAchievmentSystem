@@ -1,7 +1,7 @@
 ﻿using Server;
 using Server.Mobiles;
 using System.Collections.Generic;
-
+using System.Linq;
 
 namespace Scripts.Mythik.Systems.Achievements
 {
@@ -10,8 +10,11 @@ namespace Scripts.Mythik.Systems.Achievements
         public static AchievementSystemMemoryStone GetInstance()
         {
             if (m_instance == null)
+            {
                 m_instance = new AchievementSystemMemoryStone();
-            m_instance.MoveToWorld(new Point3D(0, 0, 0), Map.Felucca);
+                m_instance.MoveToWorld(new Point3D(0, 0, 0), Map.Felucca);
+            }
+
             return m_instance;
         }
         internal Dictionary<Serial, Dictionary<int, AchieveData>> Achievements = new Dictionary<Serial, Dictionary<int, AchieveData>>();
@@ -42,6 +45,7 @@ namespace Scripts.Mythik.Systems.Achievements
         public AchievementSystemMemoryStone(Serial serial) : base(serial)
         {
             m_instance = this;
+            System.Console.WriteLine("Loaded Achievent store: " + m_PointsTotal.Count);
         }
 
         public override void Serialize(GenericWriter writer)
