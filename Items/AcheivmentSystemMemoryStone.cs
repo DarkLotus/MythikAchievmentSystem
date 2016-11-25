@@ -45,7 +45,7 @@ namespace Scripts.Mythik.Systems.Achievements
         public AchievementSystemMemoryStone(Serial serial) : base(serial)
         {
             m_instance = this;
-            System.Console.WriteLine("Loaded Achievent store: " + m_PointsTotal.Count);
+            
         }
 
         public override void Serialize(GenericWriter writer)
@@ -108,7 +108,7 @@ namespace Scripts.Mythik.Systems.Achievements
                     Achievements.Add(id, dict);
                 }
             }
-
+            System.Console.WriteLine("Loaded Achievent store: " + m_PointsTotal.Count);
         }
     }
 }
