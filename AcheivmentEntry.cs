@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Scripts.Mythik.Systems.Achievements
 {
+    /// <summary>
+    /// If you want to add this context entry you will need to add a cliloc in the 300**** range, or
+    /// use an existing one
+    /// </summary>
     public class AchievementMenuEntry : ContextMenuEntry
     {
         private PlayerMobile _from;

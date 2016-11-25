@@ -1,4 +1,4 @@
-﻿//#define STOREONITEM
+﻿#define STOREONITEM
 
 using Server;
 using System;
@@ -18,13 +18,7 @@ using Scripts.Mythik.Systems.Achievements.Gumps;
 namespace Scripts.Mythik.Systems.Achievements
 {
     //TODO
-    //subcategories X
     //page limit?
-    // Achievement prereq achieve before showing X
-    //TODO Skill gain achieves needs event X
-    //TODO ITEM crafted event sink X
-    //TODO SKILL USE 
-    //TODO HousePlaced event sink
     /*thought of eating a lemon (and other foods), consume pots,
      *  craft a home, 
      *  own home (more for larger homes), 
@@ -95,10 +89,10 @@ namespace Scripts.Mythik.Systems.Achievements
             Achievements.Add(new DiscoveryAchievement(100, 4, 0x14EB, false, null, "Cotton!", "Discover A Cotton Field in Moonglow", 5, "A Cotton Field in Moonglow"));
             Achievements.Add(new DiscoveryAchievement(101, 4, 0x14EB, false, null, "Carrots!", "Discover A Carrot Field in Skara Brae", 5, "A Carrot Field in Skara Brae"));
 
-
+            //these two show examples of adding a reward or multiple rewards
             var achieve = new HarvestAchievement(500, 2000, 0x0E85, false, null, 500, "500 Iron Ore", "Mine 500 Iron Ore", 5, typeof(IronOre), typeof(AncientSmithyHammer));
             Achievements.Add(achieve);
-            Achievements.Add(new HarvestAchievement(501, 2000, 0x0E85, false, achieve, 5000, "5000 Iron Ore", "Mine 5000 Iron Ore", 5, typeof(IronOre), typeof(AncientSmithyHammer)));
+            Achievements.Add(new HarvestAchievement(501, 2000, 0x0E85, false, achieve, 5000, "5000 Iron Ore", "Mine 5000 Iron Ore", 5, typeof(IronOre), typeof(AncientSmithyHammer),typeof(TinkerTools),typeof(HatOfTheMagi)));
 
             Achievements.Add(new HunterAchievement(1000, 3000, 0x25D1, false, null, 5, "Dog Slayer", "Slay 5 Dogs", 5, typeof(Dog)));
             Achievements.Add(new HunterAchievement(1001, 3000, 0x25D1, false, null, 50, "Dragon Slayer", "Slay 50 Dragon", 5, typeof(Dragon)));
@@ -114,9 +108,10 @@ namespace Scripts.Mythik.Systems.Achievements
         {
             if (from == null || target == null)
                 return;
-            if (target != null)
+            if (target as PlayerMobile != null)
             {
 #if STOREONITEM
+                var player = target as PlayerMobile;
            if (!AchievementSystemMemoryStone.GetInstance().Achievements.ContainsKey(player.Serial))
                 AchievementSystemMemoryStone.GetInstance().Achievements.Add(player.Serial, new Dictionary<int, AchieveData>());
             var achieves = AchievementSystemMemoryStone.GetInstance().Achievements[player.Serial];

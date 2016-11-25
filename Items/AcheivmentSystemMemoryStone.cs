@@ -109,6 +109,7 @@ namespace Scripts.Mythik.Systems.Achievements
                 }
             }
             System.Console.WriteLine("Loaded Achievent store: " + m_PointsTotal.Count);
+            m_instance = this;
         }
     }
 }
