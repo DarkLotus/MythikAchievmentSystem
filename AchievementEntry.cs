@@ -1,4 +1,4 @@
-﻿using Server.ContextMenus;
+using Server.ContextMenus;
 using Server.Mobiles;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace Scripts.Mythik.Systems.Achievements
 
         public override void OnClick()
         {
-            AchievmentSystem.OpenGump(_from, _target);
+            AchievementSystem.OpenGump(_from, _target);
         }
     }
 

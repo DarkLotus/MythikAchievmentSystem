@@ -19,7 +19,7 @@ namespace Scripts.Mythik.Systems.Achievements
             var player = e.Harvester as PlayerMobile;
             if (e.Resource.GetType() == m_Item)
             {
-                AchievmentSystem.SetAchievementStatus(player, this, e.Resource.Amount);
+                AchievementSystem.SetAchievementStatus(player, this, e.Resource.Amount);
             }
         }
     }

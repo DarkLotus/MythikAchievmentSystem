@@ -23,7 +23,7 @@ namespace Scripts.Mythik.Systems.Achievements
         {
             if(e.Crafter is PlayerMobile && e.CraftedItem.GetType() == m_Item)
             {
-                AchievmentSystem.SetAchievementStatus(e.Crafter as PlayerMobile, this, e.CraftedItem.Amount);
+                AchievementSystem.SetAchievementStatus(e.Crafter as PlayerMobile, this, e.CraftedItem.Amount);
             }
         }
 

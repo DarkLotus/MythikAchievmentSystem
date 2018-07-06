@@ -20,7 +20,7 @@ namespace Scripts.Mythik.Systems.Achievements
             var player = e.KilledBy as PlayerMobile;
             if (player != null && e.Killed.GetType() == m_Mobile)
             {
-                AchievmentSystem.SetAchievementStatus(player, this, 1);
+                AchievementSystem.SetAchievementStatus(player, this, 1);
             }
         }
 

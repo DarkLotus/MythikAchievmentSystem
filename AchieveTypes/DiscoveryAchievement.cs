@@ -1,4 +1,4 @@
-﻿using Server;
+using Server;
 using Server.Mobiles;
 using System;
 
@@ -18,12 +18,12 @@ namespace Scripts.Mythik.Systems.Achievements
 
         private void EventSink_OnEnterRegion(OnEnterRegionEventArgs e)
         {
-            if (e == null || e.Region == null || e.From == null || e.Region.Name == null)
+            if (e == null || e.NewRegion == null || e.From == null || e.NewRegion.Name == null)
                 return;
             var player = e.From as PlayerMobile;
-            if (e.Region.Name.Contains(m_Region) && player != null)
+            if (e.NewRegion.Name.Contains(m_Region) && player != null)
             {
-                AchievmentSystem.SetAchievementStatus(player, this, 1);
+                AchievementSystem.SetAchievementStatus(player, this, 1);
 
             }
         }
