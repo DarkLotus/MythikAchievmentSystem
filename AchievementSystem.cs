@@ -1,5 +1,3 @@
-﻿#define STOREONITEM
-
 using Server;
 using System;
 using System.Collections.Generic;
@@ -7,12 +5,6 @@ using Server.Mobiles;
 using Server.Items;
 using Server.Commands;
 using Server.Misc;
-
-#if STOREONITEM
-#else
-using Scripts.Mythik.Mobiles;
-#endif
-
 using Scripts.Mythik.Systems.Achievements.Gumps;
 
 namespace Scripts.Mythik.Systems.Achievements
@@ -30,7 +22,7 @@ namespace Scripts.Mythik.Systems.Achievements
      *     use a max powerscroll (or skill stone), 
      *     ride each type of mount
      */
-    public class AchievmentSystem
+    public class AchievementSystem
     {
         public class AchievementCategory
         {
@@ -49,6 +41,23 @@ namespace Scripts.Mythik.Systems.Achievements
         public static List<BaseAchievement> Achievements = new List<BaseAchievement>();
         public static List<AchievementCategory> Categories = new List<AchievementCategory>();
 
+
+
+        private static Dictionary<Serial, Dictionary<int, AchieveData>> m_featData = new Dictionary<Serial, Dictionary<int, AchieveData>>();
+        private static Dictionary<Serial, int> m_pointsTotal = new Dictionary<Serial, int>();
+        private static int GetPlayerPointsTotal(PlayerMobile m)
+        {
+            if (!m_pointsTotal.ContainsKey(m.Serial))
+                m_pointsTotal.Add(m.Serial, 0);
+            return m_pointsTotal[m.Serial];
+        }
+        private static void AddPoints(PlayerMobile m, int points)
+        {
+            if (!m_pointsTotal.ContainsKey(m.Serial))
+                m_pointsTotal.Add(m.Serial, 0);
+            m_pointsTotal[m.Serial] += points;
+        }
+
         public static void Initialize()
         {
             Categories.Add(new AchievementCategory(1, 0, "Exploration"));
@@ -57,10 +66,16 @@ namespace Scripts.Mythik.Systems.Achievements
                 Categories.Add(new AchievementCategory(4, 1, "Points of Interest"));
 
             Categories.Add(new AchievementCategory(1000, 0, "Crafting"));
+                Categories.Add(new AchievementCategory(1001, 1000, "Alch"));
+                Categories.Add(new AchievementCategory(1002, 1000, "Smithy"));
+                Categories.Add(new AchievementCategory(1003, 1000, "Tink"));
+
             Categories.Add(new AchievementCategory(2000, 0, "Resource Gathering"));
             Categories.Add(new AchievementCategory(3000, 0, "Hunting"));
             Categories.Add(new AchievementCategory(4000, 0, "Character Development"));
             Categories.Add(new AchievementCategory(5000, 0, "Other"));
+
+            Achievements.Add(new DiscoveryAchievement(8888, 1, 0x14EB, false, null, "General expo!", "General expo!", 5, "Green Acres"));
 
 
             Achievements.Add(new DiscoveryAchievement(0, 2, 0x14EB, false, null, "Cove!", "Discover the Cove Township", 5, "Cove"));
@@ -101,7 +116,72 @@ namespace Scripts.Mythik.Systems.Achievements
 
 
             CommandSystem.Register("feats", AccessLevel.Player, new CommandEventHandler(OpenGumpCommand));
+            EventSink.WorldSave += EventSink_WorldSave;
+            LoadData();
 
+        }
+
+        private static void LoadData()
+        {
+            Persistence.Deserialize(
+                          "Saves//Achievements.bin",
+                          reader =>
+                          {
+                              int count = reader.ReadInt();
+                              
+                              for (int i = 0; i < count; ++i)
+                              {
+                                  m_pointsTotal.Add(reader.ReadInt(), reader.ReadInt());
+                              }
+
+                              count = reader.ReadInt();
+
+                              for (int i = 0; i < count; ++i)
+                              {
+                                  var id = reader.ReadInt();
+                                  var dict = new Dictionary<int, AchieveData>();
+                                  int iCount = reader.ReadInt();
+                                  if (iCount > 0)
+                                  {
+                                      for (int x = 0; x < iCount; x++)
+                                      {
+                                          dict.Add(reader.ReadInt(), new AchieveData(reader));
+                                      }
+
+                                  }
+                                  m_featData.Add(id, dict);
+                              }
+                              System.Console.WriteLine("Loaded Achievements store: " + m_featData.Count);
+                          });
+        }
+
+        private static void EventSink_WorldSave(WorldSaveEventArgs e)
+        {
+            Persistence.Serialize(
+                          "Saves//Achievements.bin",
+                          writer =>
+                          {
+                              writer.Write(m_pointsTotal.Count);
+                              foreach (var kv in m_pointsTotal)
+                              {
+                                  writer.Write(kv.Key);
+                                  writer.Write(kv.Value);
+                              }
+
+                              writer.Write(m_featData.Count);
+                              foreach (var kv in m_featData)
+                              {
+                                  writer.Write(kv.Key);
+
+                                  writer.Write(kv.Value.Count);
+
+                                  foreach (var ckv in kv.Value)
+                                  {
+                                      writer.Write(ckv.Key);
+                                      ckv.Value.Serialize(writer);
+                                  }
+                              }
+                          });
         }
 
         public static void OpenGump(Mobile from, Mobile target)
@@ -110,16 +190,13 @@ namespace Scripts.Mythik.Systems.Achievements
                 return;
             if (target as PlayerMobile != null)
             {
-#if STOREONITEM
+
                 var player = target as PlayerMobile;
-           if (!AchievementSystemMemoryStone.GetInstance().Achievements.ContainsKey(player.Serial))
-                AchievementSystemMemoryStone.GetInstance().Achievements.Add(player.Serial, new Dictionary<int, AchieveData>());
-            var achieves = AchievementSystemMemoryStone.GetInstance().Achievements[player.Serial];
-                var total = AchievementSystemMemoryStone.GetInstance().GetPlayerPointsTotal(player);
-#else
-                var achieves = (target as MythikPlayerMobile).Achievements;
-                var total = (target as MythikPlayerMobile).AchievementPointsTotal;
-#endif
+           if (!m_featData.ContainsKey(player.Serial))
+                    m_featData.Add(player.Serial, new Dictionary<int, AchieveData>());
+            var achieves = m_featData[player.Serial];
+                var total = GetPlayerPointsTotal(player);
+
                 from.SendGump(new AchievementGump(achieves, total));
             }
         }
@@ -132,13 +209,11 @@ namespace Scripts.Mythik.Systems.Achievements
 
         internal static void SetAchievementStatus(PlayerMobile player, BaseAchievement ach, int progress)
         {
-#if STOREONITEM
-           if (!AchievementSystemMemoryStone.GetInstance().Achievements.ContainsKey(player.Serial))
-                AchievementSystemMemoryStone.GetInstance().Achievements.Add(player.Serial, new Dictionary<int, AchieveData>());
-            var achieves = AchievementSystemMemoryStone.GetInstance().Achievements[player.Serial]; 
-#else
-            var achieves = (player as MythikPlayerMobile).Achievements;
-#endif
+
+           if (!m_featData.ContainsKey(player.Serial))
+                m_featData.Add(player.Serial, new Dictionary<int, AchieveData>());
+            var achieves = m_featData[player.Serial]; 
+
             if (achieves.ContainsKey(ach.ID))
             {
                 if (achieves[ach.ID].Progress >= ach.CompletionTotal)
@@ -154,11 +229,9 @@ namespace Scripts.Mythik.Systems.Achievements
             {
                 player.SendGump(new AchievementObtainedGump(ach),false);
                 achieves[ach.ID].CompletedOn = DateTime.UtcNow;
-#if STOREONITEM
-                AchievementSystemMemoryStone.GetInstance().AddPoints(player,ach.RewardPoints);
-#else
-                (player as MythikPlayerMobile).AchievementPointsTotal += ach.RewardPoints;
-#endif
+
+                AddPoints(player,ach.RewardPoints);
+
                 if (ach.RewardItems != null && ach.RewardItems.Length > 0)
                 {
                     try
