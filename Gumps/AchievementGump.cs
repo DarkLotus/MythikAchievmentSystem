@@ -1,7 +1,8 @@
-﻿using Server.Gumps;
+using Server.Gumps;
 using System.Collections.Generic;
 using Server.Network;
 using System.Linq;
+using System;
 
 namespace Scripts.Mythik.Systems.Achievements.Gumps
 {
@@ -31,13 +32,19 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
             this.AddBackground(341, 522, 353, 26, 9200);
 
             int cnt = 0;
-            for(int i = 0;i < AchievmentSystem.Categories.Count; i++)
+            var reqCat = AchievementSystem.Categories.FirstOrDefault(c => c.ID == category);
+            if (reqCat == null)
+            {
+                Console.WriteLine("Couldnt find Achievement Cat: " + category);
+                reqCat = AchievementSystem.Categories.First();
+            }
+
+            for (int i = 0;i < AchievementSystem.Categories.Count; i++)
             {
                 int x = 90;
                 int bgID = 9200;
-                var cat = AchievmentSystem.Categories[i];
-                var reqCat = AchievmentSystem.Categories.Where(c => c.ID == category).FirstOrDefault();
-
+                var cat = AchievementSystem.Categories[i];
+               
                 if (cat.Parent != 0 && cat.ID != reqCat.ID && cat.Parent != reqCat.ID && cat.Parent != reqCat.Parent)
                     continue;
                 if(cat.Parent != 0)
@@ -54,7 +61,7 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
                 cnt++;
             }
             cnt = 0; 
-            foreach( var ac in AchievmentSystem.Achievements)
+            foreach( var ac in AchievementSystem.Achievements)
             {
                 
                 if (ac.CategoryID == category)
@@ -121,12 +128,10 @@ namespace Scripts.Mythik.Systems.Achievements.Gumps
 
         public override void OnResponse(NetState sender, RelayInfo info)
         {
-            base.OnResponse(sender, info);
             if (info.ButtonID == 0)
                 return;
             var btn = info.ButtonID - 5000;
-            if (btn >= 0 && btn < AchievmentSystem.Categories.Count)
-                sender.Mobile.SendGump(new AchievementGump(m_curAchieves, m_curTotal, btn));
+            sender.Mobile.SendGump(new AchievementGump(m_curAchieves, m_curTotal, btn));
         }
 
 
